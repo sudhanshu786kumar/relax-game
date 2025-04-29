@@ -1,6 +1,6 @@
 import GameLoader from "./GameLoader";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { PointerLockControls, Sky } from "@react-three/drei";
+import { PointerLockControls, Sky, Stars } from "@react-three/drei"; // Import Stars component
 import Ground from "./Ground";
 import Player from "./Player";
 import React, { useRef, useEffect, useState } from "react";
@@ -9,9 +9,11 @@ import Animal from "./Animal";
 import Pet from "./Pet";
 import RainEffect from "./RainEffect";
 import CloudEffect from "./CloudEffect";
+import song from "../public/sounds/rain.mp3"; // Import the sound file
 
 export default function App() {
     const playerRef = useRef();
+    const rainAudioRef = useRef(null);
     const [movement, setMovement] = useState({
         forward: false,
         backward: false,
@@ -20,7 +22,7 @@ export default function App() {
     });
 
     const [gameStarted, setGameStarted] = useState(false);
-    const [gameOptions, setGameOptions] = useState({ weather: "sunny", pet: "none" });
+    const [gameOptions, setGameOptions] = useState({ weather: "sunny", pet: "dog" });
 
     const [trees, setTrees] = useState([]);
     const [animals, setAnimals] = useState([]);
@@ -32,6 +34,16 @@ export default function App() {
         setGameOptions(options);
         setGameStarted(true);
     };
+    useEffect(() => {
+        if (rainAudioRef.current) {
+            if (gameOptions.weather === "rain") {
+                rainAudioRef.current.play();
+            } else {
+                rainAudioRef.current.pause();
+                rainAudioRef.current.currentTime = 0; // Reset the audio
+            }
+        }
+    }, [gameOptions.weather]);
 
     // Handle keyboard input for WASD movement
     useEffect(() => {
@@ -207,32 +219,46 @@ export default function App() {
             {!gameStarted ? (
                 <GameLoader onStartGame={handleStartGame} />
             ) : (
-                <Canvas shadows camera={{ position: [0, 10, 20], fov: 50 }}>
-               <Sky 
-    sunPosition={[100, 1000, 100]} // Increase the y value to make the sky higher
-    distance={450000} // Optional: Adjust the distance for a larger sky dome
-/>
-                    <CameraFollow/>
-                    <PointerLockControls />
-                  
-                    {/* Add weather effects based on gameOptions.weather */}
-                    {gameOptions.weather === "rain" && <RainEffect />}
-                    {gameOptions.weather === "cloudy" && <CloudEffect />}
-                    <ambientLight intensity={0.5} />
-                    <directionalLight position={[10, 10, 10]} castShadow />
-                    {groundTiles.map((pos, index) => (
-                        <Ground key={index} position={pos} />
-                    ))}
-                    <Player ref={playerRef} />
-                    {trees.map((pos, index) => (
-                        <Tree key={index} position={pos} />
-                    ))}
-                    {animals.map((pos, index) => (
-                        <Animal key={index} position={pos} />
-                    ))}
-                    {/* Add pet following the player */}
-                    {gameOptions.pet !== "none" && <Pet type={gameOptions.pet} playerRef={playerRef} />}
-                </Canvas>
+                <>
+                    <audio ref={rainAudioRef} src={song} type="audio/mpeg" loop /> {/* Rain sound */}
+                    <Canvas shadows camera={{ position: [0, 10, 20], fov: 50 }}>
+                        {/* Sky Component */}
+                        {gameOptions.weather === "night" ? (
+                            <Stars radius={300} depth={60} count={5000} factor={7} fade />
+                        ) : (
+                            <Sky
+                                sunPosition={[100, 1000, 100]} // Sky for other weather options
+                                distance={450000}
+                            />
+                        )}
+
+                        <CameraFollow />
+                        <PointerLockControls />
+
+                        {/* Add weather effects based on gameOptions.weather */}
+                        {gameOptions.weather === "rain" && <RainEffect />}
+                        {gameOptions.weather === "cloudy" && <CloudEffect />}
+
+                        <ambientLight intensity={gameOptions.weather === "night" ? 0.2 : 0.5} />
+                        <directionalLight
+                            position={[10, 10, 10]}
+                            castShadow
+                            intensity={gameOptions.weather === "night" ? 0.5 : 1}
+                        />
+
+                        {groundTiles.map((pos, index) => (
+                            <Ground key={index} position={pos} />
+                        ))}
+                        <Player ref={playerRef} />
+                        {trees.map((pos, index) => (
+                            <Tree key={index} position={pos} />
+                        ))}
+                        {animals.map((pos, index) => (
+                            <Animal key={index} position={pos} />
+                        ))}
+                        {gameOptions.pet !== "none" && <Pet type={gameOptions.pet} playerRef={playerRef} />}
+                    </Canvas>
+                </>
             )}
         </>
     );

@@ -34,9 +34,9 @@ module.exports = (env, argv) => {
                     use: ['style-loader', 'css-loader'],
                 },
                 {
-                    test: /\.(png|jpg|jpeg|gif|svg)$/, // Support for image files
+                    test: /\.(png|svg|jpg|jpeg|gif|ogg|mp3|wav)$/i,
                     type: 'asset/resource',
-                },
+                  },
             ],
         },
         resolve: {

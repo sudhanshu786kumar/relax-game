@@ -30,6 +30,7 @@ export default function GameLoader({ onStartGame }) {
                                 <option value="sunny">Sunny</option>
                                 <option value="rain">Rain</option>
                                 <option value="cloudy">Cloudy</option>
+                                <option value="night">Night</option> {/* New Night Option */}
                             </select>
                         </div>
                         <div>
