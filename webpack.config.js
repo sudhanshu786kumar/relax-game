@@ -31,7 +31,11 @@ module.exports = (env, argv) => {
                 },
                 {
                     test: /\.css$/, // Support for CSS files
-                    use: ['style-loader', 'css-loader'],
+                    use: [
+                        'style-loader',
+                        'css-loader',
+                        'postcss-loader'
+                    ],
                 },
                 {
                     test: /\.(png|svg|jpg|jpeg|gif|ogg|mp3|wav)$/i,
