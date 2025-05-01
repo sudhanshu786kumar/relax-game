@@ -1,7 +1,7 @@
 export const SERVER_CONFIG = {
     // Production server URL - will be replaced during build
     SERVER_URL: process.env.NODE_ENV === 'production' 
-        ? 'https://game-websocket-server.onrender.com' 
+        ? 'https://relax-game.onrender.com' 
         : 'http://localhost:3001',
     
     // Game settings
