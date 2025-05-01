@@ -12,6 +12,7 @@ class MultiplayerManager {
         this.lastUpdateTime = 0;
         this.petType = "none";
         this.updateInterval = null;
+        this.chatListeners = new Set();
     }
 
     connect() {
@@ -63,6 +64,24 @@ class MultiplayerManager {
                 }
             }
         });
+
+        // Add chat message listener
+        this.socket.on('chatMessage', (message) => {
+            this.chatListeners.forEach(listener => listener(message));
+        });
+    }
+
+    // Add chat message listener
+    onChatMessage(callback) {
+        this.chatListeners.add(callback);
+        return () => this.chatListeners.delete(callback);
+    }
+
+    // Send chat message
+    sendChatMessage(message) {
+        if (this.socket && this.isConnected) {
+            this.socket.emit('chatMessage', message);
+        }
     }
 
     setPetType(petType) {
@@ -124,6 +143,7 @@ class MultiplayerManager {
             this.socket = null;
             this.isConnected = false;
             this.players.clear();
+            this.chatListeners.clear();
         }
     }
 }

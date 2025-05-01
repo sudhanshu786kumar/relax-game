@@ -66,6 +66,15 @@ io.on('connection', (socket) => {
         }
     });
 
+    // Handle chat messages
+    socket.on('chatMessage', (message) => {
+        // Broadcast message to all players
+        io.emit('chatMessage', {
+            ...message,
+            timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        });
+    });
+
     // Handle disconnection
     socket.on('disconnect', () => {
         console.log('Player disconnected:', socket.id);

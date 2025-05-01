@@ -19,6 +19,7 @@ import OtherPlayers from './OtherPlayers';
 import PlayerNotifications from './PlayerNotifications';
 import { multiplayerManager } from './server/MultiplayerManager';
 import PlayerList from './PlayerList';
+import Chat from "./Chat/Chat";
 
 // Define keyboard controls
 const keyboardControls = [
@@ -413,8 +414,10 @@ export default function App() {
                 />
             ) : (
                 <>
+                   <Chat/>
                     <PlayerNotifications />
                     <PlayerList />
+                 
                     <KeyboardControls map={keyboardControls}>
                         <Canvas
                             shadows
